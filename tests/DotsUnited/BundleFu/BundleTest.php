@@ -9,41 +9,37 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu;
-
-use DotsUnited\BundleFu\Filter\Callback as CallbackFilter;
-
 /**
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class BundleTest extends TestCase
+class DotsUnited_BundleFu_BundleTest extends DotsUnited_BundleFu_TestCase
 {
     public function testGetCssBundleUrlWithAbsoluteCssCachePathAndNoCssCacheUrlSetShouldThrowException()
     {
-        $this->setExpectedException('\RuntimeException', 'If you do not provide a css cache url, css cache path must be a relative local path...');
+        $this->setExpectedException('RuntimeException', 'If you do not provide a css cache url, css cache path must be a relative local path...');
         $this->bundle->setCssCachePath('/absolute/path');
         $this->bundle->getCssBundleUrl();
     }
 
     public function testGetJsBundleUrlWithAbsoluteJsCachePathAndNoJsCacheUrlSetShouldThrowException()
     {
-        $this->setExpectedException('\RuntimeException', 'If you do not provide a js cache url, js cache path must be a relative local path...');
+        $this->setExpectedException('RuntimeException', 'If you do not provide a js cache url, js cache path must be a relative local path...');
         $this->bundle->setJsCachePath('/absolute/path');
         $this->bundle->getJsBundleUrl();
     }
 
     public function testEndWithoutPriorBundleCallShouldThrowException()
     {
-        $this->setExpectedException('\RuntimeException', 'end() is called without a start() call.');
+        $this->setExpectedException('RuntimeException', 'end() is called without a start() call.');
         $this->bundle->end();
     }
 
     public function testEndWithoutSettingDocRootFirstShouldThrowException()
     {
-        $this->setExpectedException('\RuntimeException', 'Please set a document root either with setDocRoot() or via runtime through bundle options.');
+        $this->setExpectedException('RuntimeException', 'Please set a document root either with setDocRoot() or via runtime through bundle options.');
 
-        $bundle = new Bundle();
+        $bundle = new DotsUnited_BundleFu_Bundle();
 
         $bundle->start();
         $bundle->end();
@@ -86,13 +82,13 @@ class BundleTest extends TestCase
      */
     public function testCastingToStringShouldNotThrowException()
     {
-        //$this->setExpectedException('\PHPUnit_Framework_Error_Warning');
+        //$this->setExpectedException('PHPUnit_Framework_Error_Warning');
 
         $callback = function($content) {
-            throw new \Exception('Test');
+            throw new Exception('Test');
         };
-        $this->bundle->setCssFilter(new CallbackFilter($callback));
-        $this->bundle->setJsFilter(new CallbackFilter($callback));
+        $this->bundle->setCssFilter(new DotsUnited_BundleFu_Filter_Callback($callback));
+        $this->bundle->setJsFilter(new DotsUnited_BundleFu_Filter_Callback($callback));
 
         $this->bundle->start();
         echo $this->includeAll();
@@ -110,7 +106,7 @@ class BundleTest extends TestCase
             $called = true;
             return 'filtered';
         };
-        $this->bundle->setCssFilter(new CallbackFilter($callback));
+        $this->bundle->setCssFilter(new DotsUnited_BundleFu_Filter_Callback($callback));
 
         $this->bundle->start();
         echo '<link href="/css/css_1.css?1000" media="screen" rel="stylesheet" type="text/css">';
@@ -129,7 +125,7 @@ class BundleTest extends TestCase
             $called = true;
             return 'filtered';
         };
-        $this->bundle->setJsFilter(new CallbackFilter($callback));
+        $this->bundle->setJsFilter(new DotsUnited_BundleFu_Filter_Callback($callback));
 
         $this->bundle->start();
         echo '<script src="/js/js_1.js?1000" type="text/javascript"></script>';

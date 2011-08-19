@@ -9,13 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu;
-
 /**
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-abstract class TestCase extends \PHPUnit_Framework_TestCase
+abstract class DotsUnited_BundleFu_TestCase extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Bundle
@@ -24,8 +22,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->bundle = new Bundle();
-        $this->bundle->setDocRoot(__DIR__ . '/_files');
+        $this->bundle = new DotsUnited_BundleFu_Bundle();
+        $this->bundle->setDocRoot(dirname(__FILE__) . '/_files');
     }
 
     public function tearDown()
@@ -65,8 +63,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function purgeCache()
     {
         $paths = array(
-            __DIR__ . '/_files/css/cache',
-            __DIR__ . '/_files/js/cache'
+            dirname(__FILE__) . '/_files/css/cache',
+            dirname(__FILE__) . '/_files/js/cache'
         );
 
         foreach ($paths as $path) {

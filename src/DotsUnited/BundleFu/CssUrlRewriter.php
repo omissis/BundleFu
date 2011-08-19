@@ -9,16 +9,19 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu;
-
 /**
- * DotsUnited\BundleFu\CssUrlRewriter
+ * DotsUnited_BundleFu_CssUrlRewriter
  *
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class CssUrlRewriter
+class DotsUnited_BundleFu_CssUrlRewriter
 {
+    /**
+     * @var string
+     */
+    protected $currentFilename;
+
     /**
      * Rewrites relative urls in css files.
      *
@@ -28,11 +31,20 @@ class CssUrlRewriter
      */
     public function rewriteUrls($filename, $content)
     {
-        $self = $this;
-        return preg_replace_callback('/url *\(([^\)]+)\)/', function($matches) use ($self, $filename) {
-            $relativeUrl = trim($matches[1], ' "\'');
-            return 'url(' . $self->rewriteRelativePath($filename, $relativeUrl) . ')';
-        }, $content);
+        $this->currentFilename = $filename;
+        return preg_replace_callback('/url *\(([^\)]+)\)/', array($this, 'rewriteUrlsCallback'), $content);
+    }
+
+    /**
+     * Rewrite callback
+     *
+     * @param array $matches
+     * @return string
+     */
+    protected function rewriteUrlsCallback($matches)
+    {
+        $relativeUrl = trim($matches[1], ' "\'');
+        return 'url(' . $this->rewriteRelativePath($this->currentFilename, $relativeUrl) . ')';
     }
 
     /**

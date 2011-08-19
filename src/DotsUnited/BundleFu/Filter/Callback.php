@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu\Filter;
-
 /**
- *  DotsUnited\BundleFu\Filter\Callback
+ *  DotsUnited_BundleFu_Filter_Callback
  *
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class Callback implements FilterInterface
+class DotsUnited_BundleFu_Filter_Callback implements DotsUnited_BundleFu_Filter_FilterInterface
 {
     /**
      * @var mixed
@@ -26,7 +24,7 @@ class Callback implements FilterInterface
 
     /**
      * Constructor.
-     * 
+     *
      * @param mixed $callback
      */
     public function __construct($callback)

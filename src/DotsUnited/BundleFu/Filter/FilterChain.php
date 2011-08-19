@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu\Filter;
-
 /**
- *  DotsUnited\BundleFu\Filter\FilterChain
+ *  DotsUnited_BundleFu_Filter_FilterChain
  *
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class FilterChain implements FilterInterface
+class DotsUnited_BundleFu_Filter_FilterChain implements DotsUnited_BundleFu_Filter_FilterInterface
 {
     const CHAIN_APPEND  = 'append';
     const CHAIN_PREPEND = 'prepend';
@@ -36,7 +34,7 @@ class FilterChain implements FilterInterface
      * @param string $placement
      * @return FilterChain
      */
-    public function addFilter(FilterInterface $filter, $placement = self::CHAIN_APPEND)
+    public function addFilter(DotsUnited_BundleFu_Filter_FilterInterface $filter, $placement = self::CHAIN_APPEND)
     {
         if ($placement == self::CHAIN_PREPEND) {
             array_unshift($this->filters, $filter);
@@ -52,7 +50,7 @@ class FilterChain implements FilterInterface
      * @param FilterInterface $filter
      * @return FilterChain
      */
-    public function appendFilter(FilterInterface $filter)
+    public function appendFilter(DotsUnited_BundleFu_Filter_FilterInterface $filter)
     {
         return $this->addFilter($filter, self::CHAIN_APPEND);
     }
@@ -63,7 +61,7 @@ class FilterChain implements FilterInterface
      * @param FilterInterface $filter
      * @return FilterChain
      */
-    public function prependFilter(FilterInterface $filter)
+    public function prependFilter(DotsUnited_BundleFu_Filter_FilterInterface $filter)
     {
         return $this->addFilter($filter, self::CHAIN_PREPEND);
     }

@@ -9,17 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu;
-
-use DotsUnited\BundleFu\Filter\FilterInterface;
-
 /**
- * DotsUnited\BundleFu\Bundle
+ * DotsUnited_BundleFu_Bundle
  *
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class Bundle
+class DotsUnited_BundleFu_Bundle
 {
     /**
      * Whether to bypass capturing.
@@ -307,7 +303,7 @@ class Bundle
     public function getCssFileList()
     {
         if (null === $this->cssFileList) {
-            $this->cssFileList = new FileList();
+            $this->cssFileList = new DotsUnited_BundleFu_FileList();
         }
 
         return $this->cssFileList;
@@ -321,7 +317,7 @@ class Bundle
     public function getJsFileList()
     {
         if (null === $this->jsFileList) {
-            $this->jsFileList = new FileList();
+            $this->jsFileList = new DotsUnited_BundleFu_FileList();
         }
 
         return $this->jsFileList;
@@ -330,10 +326,10 @@ class Bundle
     /**
      * Set css filter.
      *
-     * @param FilterInterface
+     * @param DotsUnited_BundleFu_Filter_FilterInterface
      * @return Bundle
      */
-    public function setCssFilter(FilterInterface $filter)
+    public function setCssFilter(DotsUnited_BundleFu_Filter_FilterInterface $filter)
     {
         $this->cssFilter = $filter;
         return $this;
@@ -342,7 +338,7 @@ class Bundle
     /**
      * Get css filter.
      *
-     * @return FilterInterface
+     * @return DotsUnited_BundleFu_Filter_FilterInterface
      */
     public function getCssFilter()
     {
@@ -352,10 +348,10 @@ class Bundle
     /**
      * Set javascript filter.
      *
-     * @param FilterInterface
+     * @param DotsUnited_BundleFu_Filter_FilterInterface
      * @return Bundle
      */
-    public function setJsFilter(FilterInterface $filter)
+    public function setJsFilter(DotsUnited_BundleFu_Filter_FilterInterface $filter)
     {
         $this->jsFilter = $filter;
         return $this;
@@ -364,7 +360,7 @@ class Bundle
     /**
      * Get javascript filter.
      *
-     * @return FilterInterface
+     * @return DotsUnited_BundleFu_Filter_FilterInterface
      */
     public function getJsFilter()
     {
@@ -374,12 +370,12 @@ class Bundle
     /**
      * Get css url rewriter.
      *
-     * @return CssUrlRewriter
+     * @return DotsUnited_BundleFu_CssUrlRewriter
      */
     public function getCssUrlRewriter()
     {
         if (null === $this->cssUrlRewriter) {
-            $this->cssUrlRewriter = new CssUrlRewriter();
+            $this->cssUrlRewriter = new DotsUnited_BundleFu_CssUrlRewriter();
         }
 
         return $this->cssUrlRewriter;
@@ -452,7 +448,7 @@ class Bundle
             $url = $this->getCssCachePath();
 
             if (!$this->isRelativePath($url)) {
-                throw new \RuntimeException('If you do not provide a css cache url, css cache path must be a relative local path...');
+                throw new RuntimeException('If you do not provide a css cache url, css cache path must be a relative local path...');
             }
 
             $url = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $url);
@@ -484,7 +480,7 @@ class Bundle
             $url = $this->getJsCachePath();
 
             if (!$this->isRelativePath($url)) {
-                throw new \RuntimeException('If you do not provide a js cache url, js cache path must be a relative local path...');
+                throw new RuntimeException('If you do not provide a js cache url, js cache path must be a relative local path...');
             }
 
             $url = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $url);
@@ -573,13 +569,13 @@ class Bundle
     public function end(array $options = array())
     {
         if (null === $this->currentBundleOptions) {
-            throw new \RuntimeException('end() is called without a start() call.');
+            throw new RuntimeException('end() is called without a start() call.');
         }
 
         $options = array_merge($this->currentBundleOptions, $options);
 
         if (empty($options['docroot'])) {
-            throw new \RuntimeException('Please set a document root either with setDocRoot() or via runtime through bundle options.');
+            throw new RuntimeException('Please set a document root either with setDocRoot() or via runtime through bundle options.');
         }
 
         $captured = ob_get_clean();
@@ -643,7 +639,7 @@ class Bundle
         try {
             $return = $this->render();
             return $return;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
             return '';
         }
@@ -702,7 +698,7 @@ class Bundle
             }
 
             if (false === file_put_contents($cacheFile, $data, LOCK_EX)) {
-                throw new \RuntimeException('Cannot write css cache file to "' . $cacheFile . '"');
+                throw new RuntimeException('Cannot write css cache file to "' . $cacheFile . '"');
             }
 
             $cacheTime = filemtime($cacheFile);
@@ -757,7 +753,7 @@ class Bundle
             }
 
             if (false === file_put_contents($cacheFile, $data, LOCK_EX)) {
-                throw new \RuntimeException('Cannot write js cache file to "' . $cacheFile . '"');
+                throw new RuntimeException('Cannot write js cache file to "' . $cacheFile . '"');
             }
 
             $cacheTime = filemtime($cacheFile);

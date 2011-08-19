@@ -10,7 +10,7 @@
  */
 
 // Get base and application path
-$rootPath = dirname(__DIR__);
+$rootPath = dirname(dirname(__FILE__));
 
 set_include_path(implode(PATH_SEPARATOR, array(
     $rootPath . '/tests',
@@ -20,17 +20,11 @@ set_include_path(implode(PATH_SEPARATOR, array(
 
 // Setup autoloading
 spl_autoload_register(function($className) {
-    if (strpos($className, 'PHPUnit_') === false && strpos($className, 'DotsUnited\\') === false) {
+    if (strpos($className, 'PHPUnit_') === false && strpos($className, 'DotsUnited_') === false) {
         return;
     }
 
-    if (false !== strripos($className, '\\')) {
-        $replace = '\\';
-    } else {
-        $replace = '_';
-    }
-
-    require str_replace($replace, DIRECTORY_SEPARATOR, $className) . '.php';
+    require str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 }, true, true);
 
 // Define filters for clover report

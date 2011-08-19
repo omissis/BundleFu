@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu;
-
 /**
- * DotsUnited\BundleFu\FileList
+ * DotsUnited_BundleFu_FileList
  *
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class FileList implements \Iterator, \Countable
+class DotsUnited_BundleFu_FileList implements Iterator, Countable
 {
     /**
      * @var array
@@ -33,20 +31,20 @@ class FileList implements \Iterator, \Countable
      * Add a file to the list.
      *
      * @param string $file The file
-     * @param \SplFileInfo $fileInfo
+     * @param SplFileInfo $fileInfo
      * @return FileList
      */
     public function addFile($file, $fileInfo)
     {
-        if (!($fileInfo instanceof \SplFileInfo)) {
-            $fileInfo = new \SplFileInfo($fileInfo);
+        if (!($fileInfo instanceof SplFileInfo)) {
+            $fileInfo = new SplFileInfo($fileInfo);
         }
 
         $this->files[$file] = $fileInfo;
 
         try {
             $mTime = $fileInfo->getMTime();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $mTime = 0;
         }
 
@@ -103,7 +101,7 @@ class FileList implements \Iterator, \Countable
     /**
      * Implements Iterator::current()
      *
-     * @return \SplFileInfo
+     * @return SplFileInfo
      */
     public function current()
     {

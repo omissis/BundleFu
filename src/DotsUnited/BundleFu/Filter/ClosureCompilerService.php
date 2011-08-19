@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu\Filter;
-
 /**
- *  DotsUnited\BundleFu\Filter\ClosureCompilerService
+ *  DotsUnited_BundleFu_Filter_ClosureCompilerService
  *
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class ClosureCompilerService implements FilterInterface
+class DotsUnited_BundleFu_Filter_ClosureCompilerService implements DotsUnited_BundleFu_Filter_FilterInterface
 {
     /**
      * @var array
@@ -26,7 +24,7 @@ class ClosureCompilerService implements FilterInterface
 
     /**
      * Constructor.
-     * 
+     *
      * @param array $parameters
      */
     public function __construct(array $parameters = null)

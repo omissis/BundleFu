@@ -9,19 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu\Filter;
-
 /**
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  *
  * @group online
  */
-class ClosureCompilerServiceTest extends \PHPUnit_Framework_TestCase
+class DotsUnited_BundleFu_ClosureCompilerServiceTest extends PHPUnit_Framework_TestCase
 {
     public function testFilterShouldCompileContents()
     {
-        $filter = new ClosureCompilerService();
+        $filter = new DotsUnited_BundleFu_Filter_ClosureCompilerService();
 
         $uncompiled = "function js_1() { alert('hi')};
 
@@ -43,7 +41,7 @@ function func() {
 
     public function testFilterInvalidCodeShouldReturnOriginalContent()
     {
-        $filter = new ClosureCompilerService();
+        $filter = new DotsUnited_BundleFu_Filter_ClosureCompilerService();
 
         $uncompiled = "function js_1() {";
 

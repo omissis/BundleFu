@@ -9,24 +9,22 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu\Filter;
-
 /**
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class FilterChainTest extends \PHPUnit_Framework_TestCase
+class DotsUnited_BundleFu_FilterChainTest extends PHPUnit_Framework_TestCase
 {
     public function testEmpty()
     {
-        $filter = new FilterChain();
+        $filter = new DotsUnited_BundleFu_Filter_FilterChain();
         $value = 'something';
         $this->assertEquals($value, $filter->filter($value));
     }
 
     public function testFilterOrder()
     {
-        $filter = new FilterChain();
+        $filter = new DotsUnited_BundleFu_Filter_FilterChain();
         $filter->addFilter(new LowerCase())
                ->addFilter(new StripUpperCase());
         $value = 'AbC';
@@ -36,7 +34,7 @@ class FilterChainTest extends \PHPUnit_Framework_TestCase
 
     public function testFilterPrependOrder()
     {
-        $filter = new FilterChain();
+        $filter = new DotsUnited_BundleFu_Filter_FilterChain();
         $filter->appendFilter(new StripUpperCase())
                ->prependFilter(new LowerCase());
         $value = 'AbC';
@@ -46,7 +44,7 @@ class FilterChainTest extends \PHPUnit_Framework_TestCase
 
     public function testFilterReset()
     {
-        $filter = new FilterChain();
+        $filter = new DotsUnited_BundleFu_Filter_FilterChain();
         $filter->appendFilter(new StripUpperCase())
                ->prependFilter(new LowerCase());
 
@@ -59,7 +57,7 @@ class FilterChainTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFilters()
     {
-        $filter = new FilterChain();
+        $filter = new DotsUnited_BundleFu_Filter_FilterChain();
 
         $filter1 = new StripUpperCase();
         $filter2 = new LowerCase();
@@ -75,7 +73,7 @@ class FilterChainTest extends \PHPUnit_Framework_TestCase
 }
 
 
-class LowerCase implements FilterInterface
+class LowerCase implements DotsUnited_BundleFu_Filter_FilterInterface
 {
     public function filter($value)
     {
@@ -84,7 +82,7 @@ class LowerCase implements FilterInterface
 }
 
 
-class StripUpperCase implements FilterInterface
+class StripUpperCase implements DotsUnited_BundleFu_Filter_FilterInterface
 {
     public function filter($value)
     {

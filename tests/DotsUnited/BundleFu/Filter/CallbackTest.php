@@ -9,26 +9,28 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu\Filter;
-
 /**
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class CallbackTest extends \PHPUnit_Framework_TestCase
+class DotsUnited_BundleFu_CallbackTest extends PHPUnit_Framework_TestCase
 {
+    protected $called = false;
     public function testCallback()
     {
-        $called = false;
-        $callback = function() use(&$called) {
-            $called = true;
-            return 'bar';
-        };
+        $this->called = false;
+        $callback = array($this, 'callback');
 
-        $filter = new Callback($callback);
+        $filter = new DotsUnited_BundleFu_Filter_Callback($callback);
         $result = $filter->filter('foo');
 
-        $this->assertTrue($called);
+        $this->assertTrue($this->called);
         $this->assertEquals('bar', $result);
+    }
+
+    public function callback()
+    {
+        $this->called = true;
+        return 'bar';
     }
 }

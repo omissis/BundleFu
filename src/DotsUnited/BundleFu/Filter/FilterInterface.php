@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace DotsUnited\BundleFu\Filter;
-
 /**
- * DotsUnited\BundleFu\Filter\FilterInterface
+ * DotsUnited_BundleFu_Filter_FilterInterface
  *
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-interface FilterInterface
+interface DotsUnited_BundleFu_Filter_FilterInterface
 {
     /**
      * Returns the result of filtering $content.
