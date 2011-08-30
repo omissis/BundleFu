@@ -51,7 +51,9 @@ class DotsUnited_BundleFu_Filter_ClosureCompilerService implements DotsUnited_Bu
             $this->parameters +
             array(
                 'compilation_level' => 'SIMPLE_OPTIMIZATIONS'
-            )
+            ),
+            null,
+            '&'
         );
 
         $opts = array(
