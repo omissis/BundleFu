@@ -1,7 +1,7 @@
 BundleFu
 ========
 
-__Note__: This is the PHP 5.2 compat branch.
+**Note**: This is the PHP 5.2 compat branch.
 
 BundleFu is a PHP 5.2+ library which bundles multiple css/javascript files into a big package and sends it out at once.
 
@@ -44,7 +44,7 @@ pear install dotsunited/BundleFu-beta
 
 ## Prerequisites ##
 
-BundleFu needs at least PHP 5.3.0 to run and requires that you have setup autoloading (BundleFu follows the technical interoperability [standards](http://groups.google.com/group/php-standards/web/psr-0-final-proposal) for PHP 5.3 namespaces and class names).
+BundleFu needs at least PHP 5.2.0 to run and requires that you have setup autoloading (BundleFu follows the technical interoperability [standards](http://groups.google.com/group/php-standards/web/psr-0-final-proposal) for PHP 5.3 namespaces and class names).
 
 Most modern frameworks have tools to setup autoloading (e.g. [Symfony2](http://docs.symfony-reloaded.org/guides/tools/autoloader.html)), if you are unsure you can use the following code snippet in your bootstrap file:
 
