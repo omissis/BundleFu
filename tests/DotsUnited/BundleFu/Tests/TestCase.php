@@ -13,7 +13,7 @@
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-abstract class DotsUnited_BundleFu_TestCase extends PHPUnit_Framework_TestCase
+abstract class DotsUnited_BundleFu_Tests_TestCase extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Bundle

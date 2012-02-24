@@ -15,7 +15,7 @@
  *
  * @group online
  */
-class DotsUnited_BundleFu_ClosureCompilerServiceTest extends PHPUnit_Framework_TestCase
+class DotsUnited_BundleFu_Tests_ClosureCompilerServiceTest extends PHPUnit_Framework_TestCase
 {
     public function testFilterShouldCompileContents()
     {
@@ -35,6 +35,28 @@ function func() {
 }
 ";
         $compiled = 'function js_1(){alert("hi")}function func(){alert("hi");return!0}function func(){alert("hi");return!0};';
+
+        $this->assertEquals($compiled, trim($filter->filter($uncompiled)));
+    }
+
+    public function testFilterShouldAcceptParametersInContructor()
+    {
+        $filter = new DotsUnited_BundleFu_Filter_ClosureCompilerService(array('compilation_level' => 'WHITESPACE_ONLY'));
+
+        $uncompiled = "function js_1() { alert('hi')};
+
+// this is a function
+function func() {
+  alert('hi')
+  return true
+}
+
+function func() {
+  alert('hi')
+  return true
+}
+";
+        $compiled = 'function js_1(){alert("hi")}function func(){alert("hi");return true}function func(){alert("hi");return true};';
 
         $this->assertEquals($compiled, trim($filter->filter($uncompiled)));
     }

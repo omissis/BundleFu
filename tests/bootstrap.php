@@ -27,16 +27,4 @@ spl_autoload_register(function($className) {
     require str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 }, true, true);
 
-// Define filters for clover report
-PHP_CodeCoverage_Filter::getInstance()->addDirectoryToWhitelist($rootPath . '/src');
-
-PHP_CodeCoverage_Filter::getInstance()->addDirectoryToBlacklist($rootPath . '/tests');
-
-if (defined('PEAR_INSTALL_DIR') && is_dir(PEAR_INSTALL_DIR)) {
-    PHP_CodeCoverage_Filter::getInstance()->addDirectoryToBlacklist(PEAR_INSTALL_DIR);
-}
-if (defined('PHP_LIBDIR') && is_dir(PEAR_INSTALL_DIR)) {
-    PHP_CodeCoverage_Filter::getInstance()->addDirectoryToBlacklist(PHP_LIBDIR);
-}
-
 unset($rootPath);

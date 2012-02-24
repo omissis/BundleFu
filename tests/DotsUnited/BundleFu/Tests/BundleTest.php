@@ -13,7 +13,7 @@
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class DotsUnited_BundleFu_BundleTest extends DotsUnited_BundleFu_TestCase
+class DotsUnited_BundleFu_Tests_BundleTest extends DotsUnited_BundleFu_Tests_TestCase
 {
     public function testGetCssBundleUrlWithAbsoluteCssCachePathAndNoCssCacheUrlSetShouldThrowException()
     {

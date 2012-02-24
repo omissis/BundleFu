@@ -13,7 +13,7 @@
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
  * @version @package_version@
  */
-class DotsUnited_BundleFu_FilterChainTest extends PHPUnit_Framework_TestCase
+class DotsUnited_BundleFu_Tests_FilterChainTest extends PHPUnit_Framework_TestCase
 {
     public function testEmpty()
     {
