@@ -15,6 +15,29 @@
  */
 class DotsUnited_BundleFu_Tests_BundleTest extends DotsUnited_BundleFu_Tests_TestCase
 {
+    public function testSetOptions()
+    {
+        $options = array(
+            'name'           => 'testbundle',
+            'doc_root'       => '/my/custom/docroot',
+            'bypass'         => true,
+            'css_filter'     => $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface'),
+            'js_filter'      => $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface'),
+            'css_cache_path' => 'css/cache/path',
+            'js_cache_path'  => 'js/cache/path',
+            'css_cache_url'  => 'css/cache/url',
+            'js_cache_url'   => 'js/cache/url',
+        );
+
+        $bundle = new DotsUnited_BundleFu_Bundle();
+        $bundle->setOptions($options);
+
+        foreach ($options as $key => $val) {
+            $method = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key)));
+            $this->assertEquals($val, $bundle->$method(), ' -> ' . $key);
+        }
+    }
+
     public function testGetCssBundleUrlWithAbsoluteCssCachePathAndNoCssCacheUrlSetShouldThrowException()
     {
         $this->setExpectedException('RuntimeException', 'If you do not provide a css cache url, css cache path must be a relative local path...');

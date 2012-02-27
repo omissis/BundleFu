@@ -120,6 +120,52 @@ class DotsUnited_BundleFu_Bundle
     protected $currentBundleOptions;
 
     /**
+     * Allows to pass options as array.
+     *
+     * @param array $options
+     * @return Bundle
+     */
+    public function setOptions(array $options)
+    {
+        foreach ($options as $key => $val) {
+            switch ($key) {
+                case 'name':
+                    $this->setName($val);
+                    break;
+                case 'doc_root':
+                    $this->setDocRoot($val);
+                    break;
+                case 'bypass':
+                    $this->setBypass($val);
+                    break;
+                case 'render_as_xhtml':
+                    $this->setRenderAsXhtml($val);
+                    break;
+                case 'css_filter':
+                    $this->setCssFilter($val);
+                    break;
+                case 'js_filter':
+                    $this->setJsFilter($val);
+                    break;
+                case 'css_cache_path':
+                    $this->setCssCachePath($val);
+                    break;
+                case 'js_cache_path':
+                    $this->setJsCachePath($val);
+                    break;
+                case 'css_cache_url':
+                    $this->setCssCacheUrl($val);
+                    break;
+                case 'js_cache_url':
+                    $this->setJsCacheUrl($val);
+                    break;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Set whether to bypass capturing.
      *
      * @param boolean $bypass
@@ -204,7 +250,7 @@ class DotsUnited_BundleFu_Bundle
      */
     public function getCssCachePath()
     {
-        return $this->cssCachePath ;
+        return $this->cssCachePath;
     }
 
     /**
@@ -226,7 +272,7 @@ class DotsUnited_BundleFu_Bundle
      */
     public function getJsCachePath()
     {
-        return $this->jsCachePath ;
+        return $this->jsCachePath;
     }
 
     /**
@@ -329,7 +375,7 @@ class DotsUnited_BundleFu_Bundle
      * @param DotsUnited_BundleFu_Filter_FilterInterface
      * @return Bundle
      */
-    public function setCssFilter(DotsUnited_BundleFu_Filter_FilterInterface $filter)
+    public function setCssFilter(DotsUnited_BundleFu_Filter_FilterInterface $filter = null)
     {
         $this->cssFilter = $filter;
         return $this;
@@ -351,7 +397,7 @@ class DotsUnited_BundleFu_Bundle
      * @param DotsUnited_BundleFu_Filter_FilterInterface
      * @return Bundle
      */
-    public function setJsFilter(DotsUnited_BundleFu_Filter_FilterInterface $filter)
+    public function setJsFilter(DotsUnited_BundleFu_Filter_FilterInterface $filter = null)
     {
         $this->jsFilter = $filter;
         return $this;
