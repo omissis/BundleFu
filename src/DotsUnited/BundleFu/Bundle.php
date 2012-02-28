@@ -118,6 +118,16 @@ class DotsUnited_BundleFu_Bundle
      * @var array
      */
     protected $currentBundleOptions;
+    
+    /**
+     * Constructor.
+     * 
+     * @param array $options 
+     */
+    public function __construct(array $options = array())
+    {
+        $this->setOptions($options);
+    }
 
     /**
      * Allows to pass options as array.

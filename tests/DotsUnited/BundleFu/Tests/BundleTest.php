@@ -18,15 +18,16 @@ class DotsUnited_BundleFu_Tests_BundleTest extends DotsUnited_BundleFu_Tests_Tes
     public function testSetOptions()
     {
         $options = array(
-            'name'           => 'testbundle',
-            'doc_root'       => '/my/custom/docroot',
-            'bypass'         => true,
-            'css_filter'     => $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface'),
-            'js_filter'      => $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface'),
-            'css_cache_path' => 'css/cache/path',
-            'js_cache_path'  => 'js/cache/path',
-            'css_cache_url'  => 'css/cache/url',
-            'js_cache_url'   => 'js/cache/url',
+            'name'            => 'testbundle',
+            'doc_root'        => '/my/custom/docroot',
+            'bypass'          => true,
+            'render_as_xhtml' => true,
+            'css_filter'      => $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface'),
+            'js_filter'       => $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface'),
+            'css_cache_path'  => 'css/cache/path',
+            'js_cache_path'   => 'js/cache/path',
+            'css_cache_url'   => 'css/cache/url',
+            'js_cache_url'    => 'js/cache/url',
         );
 
         $bundle = new DotsUnited_BundleFu_Bundle();
