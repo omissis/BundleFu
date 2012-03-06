@@ -60,6 +60,12 @@ class DotsUnited_BundleFu_Tests_FactoryTest extends PHPUnit_Framework_TestCase
         $factory->createBundle(array('css_filter' => 'css_filter'));
     }
 
+    public function testFactoryAllowsSettingNullFilters()
+    {
+        $factory = new DotsUnited_BundleFu_Factory(array(), array('css_filter' => null));
+        $factory->createBundle(array('css_filter' => 'css_filter'));
+    }
+
     public function testCreateBundleAcceptsArrayArgument()
     {
         $factory = new DotsUnited_BundleFu_Factory(array('name' => 'foo'));

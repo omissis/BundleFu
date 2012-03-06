@@ -20,6 +20,7 @@ class DotsUnited_BundleFu_Tests_FilterChainTest extends PHPUnit_Framework_TestCa
         $filter = new DotsUnited_BundleFu_Filter_FilterChain();
         $value = 'something';
         $this->assertEquals($value, $filter->filter($value));
+        $this->assertEquals($value, $filter->filterFile($value, '/js/js_1.js', new \SplFileInfo(__DIR__ . '/_files/js/js_1.js')));
     }
 
     public function testFilterOrder()
@@ -30,6 +31,7 @@ class DotsUnited_BundleFu_Tests_FilterChainTest extends PHPUnit_Framework_TestCa
         $value = 'AbC';
         $valueExpected = 'abc';
         $this->assertEquals($valueExpected, $filter->filter($value));
+        $this->assertEquals($valueExpected, $filter->filterFile($value, '/js/js_1.js', new \SplFileInfo(__DIR__ . '/_files/js/js_1.js')));
     }
 
     public function testFilterPrependOrder()
@@ -40,6 +42,7 @@ class DotsUnited_BundleFu_Tests_FilterChainTest extends PHPUnit_Framework_TestCa
         $value = 'AbC';
         $valueExpected = 'abc';
         $this->assertEquals($valueExpected, $filter->filter($value));
+        $this->assertEquals($valueExpected, $filter->filterFile($value, '/js/js_1.js', new \SplFileInfo(__DIR__ . '/_files/js/js_1.js')));
     }
 
     public function testFilterReset()
@@ -53,6 +56,7 @@ class DotsUnited_BundleFu_Tests_FilterChainTest extends PHPUnit_Framework_TestCa
         $value = 'AbC';
         $valueExpected = 'AbC';
         $this->assertEquals($valueExpected, $filter->filter($value));
+        $this->assertEquals($valueExpected, $filter->filterFile($value, '/js/js_1.js', new \SplFileInfo(__DIR__ . '/_files/js/js_1.js')));
     }
 
     public function testGetFilters()
@@ -75,17 +79,27 @@ class DotsUnited_BundleFu_Tests_FilterChainTest extends PHPUnit_Framework_TestCa
 
 class LowerCase implements DotsUnited_BundleFu_Filter_FilterInterface
 {
-    public function filter($value)
+    public function filter($content)
     {
-        return strtolower($value);
+        return strtolower($content);
+    }
+
+    public function filterFile($content, $file, \SplFileInfo $fileInfo)
+    {
+        return strtolower($content);
     }
 }
 
 
 class StripUpperCase implements DotsUnited_BundleFu_Filter_FilterInterface
 {
-    public function filter($value)
+    public function filter($content)
     {
-        return preg_replace('/[A-Z]/', '', $value);
+        return preg_replace('/[A-Z]/', '', $content);
+    }
+
+    public function filterFile($content, $file, \SplFileInfo $fileInfo)
+    {
+        return preg_replace('/[A-Z]/', '', $content);
     }
 }

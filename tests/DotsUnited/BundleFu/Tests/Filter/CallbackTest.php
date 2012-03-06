@@ -28,6 +28,31 @@ class DotsUnited_BundleFu_Tests_CallbackTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $result);
     }
 
+    public function testFileCallback()
+    {
+        $called = false;
+        $callbackFile = function() use(&$called) {
+            $called = true;
+            return 'bar';
+        };
+
+        $filter = new DotsUnited_BundleFu_Filter_Callback(null, $callbackFile);
+        $result = $filter->filterFile('foo', '/js/js_1.js', new \SplFileInfo(__DIR__ . '/_files/js/js_1.js'));
+
+        $this->assertTrue($called);
+        $this->assertEquals('bar', $result);
+    }
+
+    public function testNullCallbacks()
+    {
+        $filter = new DotsUnited_BundleFu_Filter_Callback();
+
+        $value = "foo";
+
+        $this->assertEquals($value, $filter->filter($value));
+        $this->assertEquals($value, $filter->filterFile($value, '/js/js_1.js', new \SplFileInfo(__DIR__ . '/_files/js/js_1.js')));
+    }
+
     public function callback()
     {
         $this->called = true;

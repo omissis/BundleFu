@@ -25,6 +25,13 @@ class DotsUnited_BundleFu_Bundle
     protected $bypass = false;
 
     /**
+     * Whether to force bundling.
+     *
+     * @var boolean
+     */
+    protected $force = false;
+
+    /**
      * Directory in which to look for files.
      *
      * @var string
@@ -118,11 +125,11 @@ class DotsUnited_BundleFu_Bundle
      * @var array
      */
     protected $currentBundleOptions;
-    
+
     /**
      * Constructor.
-     * 
-     * @param array $options 
+     *
+     * @param array $options
      */
     public function __construct(array $options = array())
     {
@@ -147,6 +154,9 @@ class DotsUnited_BundleFu_Bundle
                     break;
                 case 'bypass':
                     $this->setBypass($val);
+                    break;
+                case 'force':
+                    $this->setForce($val);
                     break;
                 case 'render_as_xhtml':
                     $this->setRenderAsXhtml($val);
@@ -194,7 +204,29 @@ class DotsUnited_BundleFu_Bundle
      */
     public function getBypass()
     {
-        return $this->bypass ;
+        return $this->bypass;
+    }
+
+    /**
+     * Set whether to force bundling.
+     *
+     * @param boolean $force
+     * @return Bundle
+     */
+    public function setForce($force)
+    {
+        $this->force = $force;
+        return $this;
+    }
+
+    /**
+     * Get whether to force bundling.
+     *
+     * @return boolean
+     */
+    public function getForce()
+    {
+        return $this->force;
     }
 
     /**
@@ -564,12 +596,18 @@ class DotsUnited_BundleFu_Bundle
      */
     public function addCssFile($file, $docRoot = null)
     {
-        if (!$docRoot) {
+        if (null === $docRoot) {
             $docRoot = $this->getDocRoot();
         }
 
+        $docRoot = (string) $docRoot;
+
+        if ('' !== $docRoot) {
+            $docRoot .= DIRECTORY_SEPARATOR;
+        }
+
         $file    = preg_replace('/^https?:\/\/[^\/]+/i', '', $file);
-        $abspath = $docRoot . DIRECTORY_SEPARATOR . $file;
+        $abspath = $docRoot . $file;
 
         $this->getCssFileList()->addFile($file, $abspath);
 
@@ -585,12 +623,18 @@ class DotsUnited_BundleFu_Bundle
      */
     public function addJsFile($file, $docRoot = null)
     {
-        if (!$docRoot) {
+        if (null === $docRoot) {
             $docRoot = $this->getDocRoot();
         }
 
+        $docRoot = (string) $docRoot;
+
+        if ('' !== $docRoot) {
+            $docRoot .= DIRECTORY_SEPARATOR;
+        }
+
         $file    = preg_replace('/^https?:\/\/[^\/]+/i', '', $file);
-        $abspath = $docRoot . DIRECTORY_SEPARATOR . $file;
+        $abspath = $docRoot . $file;
 
         $this->getJsFileList()->addFile($file, $abspath);
 
@@ -630,10 +674,6 @@ class DotsUnited_BundleFu_Bundle
 
         $options = array_merge($this->currentBundleOptions, $options);
 
-        if (empty($options['docroot'])) {
-            throw new RuntimeException('Please set a document root either with setDocRoot() or via runtime through bundle options.');
-        }
-
         $captured = ob_get_clean();
 
         if ($options['bypass']) {
@@ -656,7 +696,7 @@ class DotsUnited_BundleFu_Bundle
      */
     public function extractFiles($html, $docRoot = null)
     {
-        if (!$docRoot) {
+        if (null === $docRoot) {
             $docRoot = $this->getDocRoot();
         }
 
@@ -724,13 +764,22 @@ class DotsUnited_BundleFu_Bundle
             return '';
         }
 
+        $generate  = true;
         $cacheFile = $this->getCssBundlePath();
-        $cacheTime = @filemtime($cacheFile);
 
-        if (false === $cacheTime || $cacheTime < $cssFileList->getMaxMTime()) {
+        if (!$this->getForce() && file_exists($cacheFile)) {
+            $cacheTime = filemtime($cacheFile);
+
+            if (false !== $cacheTime && $cacheTime >= $cssFileList->getMaxMTime()) {
+                $generate = false;
+            }
+        }
+
+        if ($generate) {
             $data = '';
 
             $cssUrlRewriter = $this->getCssUrlRewriter();
+            $filter = $this->getCssFilter();
 
             foreach ($cssFileList as $file => $fileInfo) {
                 $data .= '/* --------- ' . $file . ' --------- */' . PHP_EOL;
@@ -738,26 +787,19 @@ class DotsUnited_BundleFu_Bundle
                 if (!$contents) {
                     $data .= '/* FILE READ ERROR! */' . PHP_EOL;
                 } else {
+                    if (null !== $filter) {
+                        $data = $filter->filterFile($data, $file, $fileInfo);
+                    }
+
                     $data .= $cssUrlRewriter->rewriteUrls($file, $contents) . PHP_EOL;
                 }
             }
 
-            $filter = $this->getCssFilter();
             if (null !== $filter) {
                 $data = $filter->filter($data);
             }
 
-            $dir = dirname($cacheFile);
-
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            if (false === file_put_contents($cacheFile, $data, LOCK_EX)) {
-                throw new RuntimeException('Cannot write css cache file to "' . $cacheFile . '"');
-            }
-
-            $cacheTime = filemtime($cacheFile);
+            $cacheTime = $this->writeCacheFile($cacheFile, $data);
         }
 
         return sprintf(
@@ -781,11 +823,21 @@ class DotsUnited_BundleFu_Bundle
             return '';
         }
 
+        $generate  = true;
         $cacheFile = $this->getJsBundlePath();
-        $cacheTime = @filemtime($cacheFile);
 
-        if (false === $cacheTime || $cacheTime < $jsFileList->getMaxMTime()) {
+        if (!$this->getForce() && file_exists($cacheFile)) {
+            $cacheTime = filemtime($cacheFile);
+
+            if (false !== $cacheTime && $cacheTime >= $jsFileList->getMaxMTime()) {
+                $generate = false;
+            }
+        }
+
+        if ($generate) {
             $data = '';
+
+            $filter = $this->getJsFilter();
 
             foreach ($jsFileList as $file => $fileInfo) {
                 $data .= '/* --------- ' . $file . ' --------- */' . PHP_EOL;
@@ -793,26 +845,19 @@ class DotsUnited_BundleFu_Bundle
                 if (!$contents) {
                     $data .= '/* FILE READ ERROR! */' . PHP_EOL;
                 } else {
+                    if (null !== $filter) {
+                        $data = $filter->filterFile($data, $file, $fileInfo);
+                    }
+
                     $data .= $contents . PHP_EOL;
                 }
             }
 
-            $filter = $this->getJsFilter();
             if (null !== $filter) {
                 $data = $filter->filter($data);
             }
 
-            $dir = dirname($cacheFile);
-
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            if (false === file_put_contents($cacheFile, $data, LOCK_EX)) {
-                throw new RuntimeException('Cannot write js cache file to "' . $cacheFile . '"');
-            }
-
-            $cacheTime = filemtime($cacheFile);
+            $cacheTime = $this->writeCacheFile($cacheFile, $data);
         }
 
         return sprintf(
@@ -831,5 +876,29 @@ class DotsUnited_BundleFu_Bundle
     public function isRelativePath($path)
     {
         return strpos($path, '://') === false && !preg_match('/^\\//', $path) && !preg_match('/^[A-Z]:\\\\/i', $path);
+    }
+
+    /**
+     * Write a cache file to disk.
+     *
+     * @param string $cacheFile
+     * @param string $data
+     * @return integer
+     */
+    protected function writeCacheFile($cacheFile, $data)
+    {
+        $dir = dirname($cacheFile);
+
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        if (false === file_put_contents($cacheFile, $data, LOCK_EX)) {
+            // @codeCoverageIgnoreStart
+            throw new \RuntimeException('Cannot write cache file to "' . $cacheFile . '"');
+            // @codeCoverageIgnoreEnd
+        }
+
+        return filemtime($cacheFile);
     }
 }

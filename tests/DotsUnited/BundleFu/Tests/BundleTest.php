@@ -21,6 +21,7 @@ class DotsUnited_BundleFu_Tests_BundleTest extends DotsUnited_BundleFu_Tests_Tes
             'name'            => 'testbundle',
             'doc_root'        => '/my/custom/docroot',
             'bypass'          => true,
+            'force'           => true,
             'render_as_xhtml' => true,
             'css_filter'      => $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface'),
             'js_filter'       => $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface'),
@@ -57,16 +58,6 @@ class DotsUnited_BundleFu_Tests_BundleTest extends DotsUnited_BundleFu_Tests_Tes
     {
         $this->setExpectedException('RuntimeException', 'end() is called without a start() call.');
         $this->bundle->end();
-    }
-
-    public function testEndWithoutSettingDocRootFirstShouldThrowException()
-    {
-        $this->setExpectedException('RuntimeException', 'Please set a document root either with setDocRoot() or via runtime through bundle options.');
-
-        $bundle = new DotsUnited_BundleFu_Bundle();
-
-        $bundle->start();
-        $bundle->end();
     }
 
     public function testCastingInstanceToStringShouldCallRender()
@@ -123,42 +114,87 @@ class DotsUnited_BundleFu_Tests_BundleTest extends DotsUnited_BundleFu_Tests_Tes
 
     /**************************************************************************/
 
+    public function testAddCssFileShouldAcceptAbsolutePath()
+    {
+        $docRoot = $this->bundle->getDocRoot();
+        $this->bundle->setDocRoot(null);
+
+        $this->bundle->addCssFile($docRoot . '/css/css_1.css');
+
+        $this->assertEquals($docRoot . '/css/css_1.css', $this->bundle->getCssFileList()->current()->getPathname());
+    }
+
+    public function testAddJsFileShouldAcceptAbsolutePath()
+    {
+        $docRoot = $this->bundle->getDocRoot();
+        $this->bundle->setDocRoot(null);
+
+        $this->bundle->addJsFile($docRoot . '/js/js_1.js');
+
+        $this->assertEquals($docRoot . '/js/js_1.js', $this->bundle->getJsFileList()->current()->getPathname());
+    }
+
+    public function testExtractFilesShouldAcceptAbsolutePaths()
+    {
+        $docRoot = $this->bundle->getDocRoot();
+        $this->bundle->setDocRoot(null);
+
+        $str = '<link href="' . $docRoot . '/css/css_1.css"><script src="' . $docRoot . '/js/js_1.js"/>';
+
+        $this->bundle->extractFiles($str);
+
+        $this->assertEquals($docRoot . '/css/css_1.css', $this->bundle->getCssFileList()->current()->getPathname());
+        $this->assertEquals($docRoot . '/js/js_1.js', $this->bundle->getJsFileList()->current()->getPathname());
+    }
+
     public function testBundleShouldUseCssFilters()
     {
-        $called = false;
-        $callback = function($content) use(&$called) {
-            $called = true;
-            return 'filtered';
-        };
-        $this->bundle->setCssFilter(new DotsUnited_BundleFu_Filter_Callback($callback));
+        $filter = $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface');
+
+        $filter
+            ->expects($this->at(0))
+            ->method('filterFile')
+            ->will($this->returnValue('filtered1'));
+
+        $filter
+            ->expects($this->at(1))
+            ->method('filter')
+            ->will($this->returnValue('filtered2'));
+
+        $this->bundle->setCssFilter($filter);
 
         $this->bundle->start();
         echo '<link href="/css/css_1.css?1000" media="screen" rel="stylesheet" type="text/css">';
         $this->bundle->end();
 
-        $rendered = $this->bundle->render();
+        $this->bundle->render();
 
-        $this->assertTrue($called);
-        $this->assertFileMatch($this->bundle->getCssBundlePath(), 'filtered');
+        $this->assertFileMatch($this->bundle->getCssBundlePath(), 'filtered2');
     }
 
     public function testBundleShouldUseJsFilters()
     {
-        $called = false;
-        $callback = function($content) use(&$called) {
-            $called = true;
-            return 'filtered';
-        };
-        $this->bundle->setJsFilter(new DotsUnited_BundleFu_Filter_Callback($callback));
+        $filter = $this->getMock('DotsUnited_BundleFu_Filter_FilterInterface');
+
+        $filter
+            ->expects($this->at(0))
+            ->method('filterFile')
+            ->will($this->returnValue('filtered1'));
+
+        $filter
+            ->expects($this->at(1))
+            ->method('filter')
+            ->will($this->returnValue('filtered2'));
+
+        $this->bundle->setJsFilter($filter);
 
         $this->bundle->start();
         echo '<script src="/js/js_1.js?1000" type="text/javascript"></script>';
         $this->bundle->end();
 
-        $rendered = $this->bundle->render();
+        $this->bundle->render();
 
-        $this->assertTrue($called);
-        $this->assertFileMatch($this->bundle->getJsBundlePath(), 'filtered');
+        $this->assertFileMatch($this->bundle->getJsBundlePath(), 'filtered2');
     }
 
     public function testSetCssCacheUrlShouldBeUsedInOutput()
@@ -365,6 +401,30 @@ class DotsUnited_BundleFu_Tests_BundleTest extends DotsUnited_BundleFu_Tests_Tes
         $this->assertEquals($this->includeSome() . $this->includeAll(), $contents);
     }
 
+    public function testForceShouldAlwaysBundle()
+    {
+        $this->bundle->setForce(true);
+
+        $this->bundle->start();
+        echo $this->includeSome();
+        $this->bundle->end();
+
+        $first = $this->bundle->render();
+
+        $this->bundle->reset();
+
+        // Ensure we're sleeping 1 second so that the cache time changes
+        sleep(1);
+
+        $this->bundle->start();
+        echo $this->includeSome();
+        $this->bundle->end();
+
+        $second = $this->bundle->render();
+
+        $this->assertNotEquals($first, $second);
+    }
+
     public function testBundleCssFileShouldRewriteRelativePath()
     {
         $this->bundle->start();
@@ -375,110 +435,5 @@ class DotsUnited_BundleFu_Tests_BundleTest extends DotsUnited_BundleFu_Tests_Tes
 
         $this->assertFileMatch($this->bundle->getCssBundlePath(), "background-image: url(/images/background.gif)");
         $this->assertFileMatch($this->bundle->getCssBundlePath(), "background-image: url(/images/groovy/background_2.gif)");
-    }
-
-    public function testRewriteRelativePathShouldRewrite()
-    {
-        $this->assertEquals(
-            '/images/spinner.gif',
-            $this->bundle->getCssUrlRewriter()->rewriteRelativePath(
-                '/stylesheets/active_scaffold/default/stylesheet.css',
-                '../../../images/spinner.gif'
-            )
-        );
-
-        $this->assertEquals(
-            '/images/spinner.gif',
-            $this->bundle->getCssUrlRewriter()->rewriteRelativePath(
-                '/stylesheets/active_scaffold/default/stylesheet.css',
-                '../../../images/./../images/goober/../spinner.gif'
-            )
-        );
-
-        $this->assertEquals(
-            '/images/spinner.gif',
-            $this->bundle->getCssUrlRewriter()->rewriteRelativePath(
-                'stylesheets/active_scaffold/default/./stylesheet.css',
-                '../../../images/spinner.gif'
-            )
-        );
-
-        $this->assertEquals(
-            '/stylesheets/image.gif',
-            $this->bundle->getCssUrlRewriter()->rewriteRelativePath(
-                'stylesheets/main.css',
-                'image.gif'
-            )
-        );
-
-        $this->assertEquals(
-            '/stylesheets/image.gif',
-            $this->bundle->getCssUrlRewriter()->rewriteRelativePath(
-                '/stylesheets////default/main.css',
-                '..//image.gif'
-            )
-        );
-
-        $this->assertEquals(
-            '/images/image.gif',
-            $this->bundle->getCssUrlRewriter()->rewriteRelativePath(
-                '/stylesheets/default/main.css',
-                '/images/image.gif'
-            )
-        );
-    }
-
-    public function testRewriteRelativePathShouldntRewriteIfAbsoluteUrl()
-    {
-        $this->assertEquals(
-            'http://www.url.com/images/image.gif',
-            $this->bundle->getCssUrlRewriter()->rewriteRelativePath(
-                'stylesheets/main.css',
-                'http://www.url.com/images/image.gif'
-            )
-        );
-
-        $this->assertEquals(
-            'ftp://www.url.com/images/image.gif',
-            $this->bundle->getCssUrlRewriter()->rewriteRelativePath(
-                'stylesheets/main.css',
-                'ftp://www.url.com/images/image.gif'
-            )
-        );
-    }
-
-    public function testRewriteRelativePathShouldStripSpacesAndQuotes()
-    {
-        $this->assertEquals(
-            'background-image: url(/stylesheets/image.gif)',
-            $this->bundle->getCssUrlRewriter()->rewriteUrls(
-                'stylesheets/main.css',
-                'background-image: url(\'image.gif\')'
-            )
-        );
-
-        $this->assertEquals(
-            'background-image: url(/stylesheets/image.gif)',
-            $this->bundle->getCssUrlRewriter()->rewriteUrls(
-                'stylesheets/main.css',
-                'background-image: url("image.gif")'
-            )
-        );
-
-        $this->assertEquals(
-            'background-image: url(/stylesheets/image.gif)',
-            $this->bundle->getCssUrlRewriter()->rewriteUrls(
-                'stylesheets/main.css',
-                'background-image: url( image.gif )'
-            )
-        );
-
-        $this->assertEquals(
-            'background-image: url(/stylesheets/image.gif)',
-            $this->bundle->getCssUrlRewriter()->rewriteUrls(
-                'stylesheets/main.css',
-                'background-image: url( "image.gif ")'
-            )
-        );
     }
 }

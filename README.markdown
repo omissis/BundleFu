@@ -42,33 +42,15 @@ Installation
 BundleFu can be installed using the [Composer](http://packagist.org) tool. You can either add `dotsunited/bundlefu` to the dependencies in your composer.json, or if you want to install BundleFu as standalone, go to the main directory and run:
 
 ```bash
-$ wget http://getcomposer.org/composer.phar 
+$ wget http://getcomposer.org/composer.phar
 $ php composer.phar install
 ```
-<<<<<<< HEAD
-pear channel-discover pear.dotsunited.de
-pear install dotsunited/BundleFu-beta
-```
-
-## Prerequisites ##
-
-BundleFu needs at least PHP 5.2.0 to run and requires that you have setup autoloading (BundleFu follows the technical interoperability [standards](http://groups.google.com/group/php-standards/web/psr-0-final-proposal) for PHP 5.3 namespaces and class names).
-=======
->>>>>>> master
 
 You can then use the composer-generated autoloader to access the BundleFu classes:
 
 ```php
 <?php
-<<<<<<< HEAD
-spl_autoload_register(function($className) {
-    if (strpos($className, 'DotsUnited_BundleFu_') === 0) {
-        require str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
-    }
-});
-=======
 require 'vendor/.composer/autoload.php';
->>>>>>> master
 ?>
 ```
 
@@ -183,7 +165,7 @@ $bundle1 = $factory->createBundle(array('js_filter' => 'js_closure_compiler'));
 Filters
 -------
 
-You can manipulate the bundled css/javascript code with filters. Filters are classes which implement `DotsUnited_BundleFu_Filter_FilterInterface`.
+You can manipulate the loaded css/javascript files and the bundled css/javascript code with filters. Filters are classes which implement `DotsUnited_BundleFu_Filter_FilterInterface`.
 
 You can add filters like this:
 
@@ -277,6 +259,7 @@ Notes
     ```
 
     Instead, you'll need to include each javascript file as normal.
+
 
 License
 -------

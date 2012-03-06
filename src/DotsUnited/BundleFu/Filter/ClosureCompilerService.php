@@ -35,10 +35,7 @@ class DotsUnited_BundleFu_Filter_ClosureCompilerService implements DotsUnited_Bu
     }
 
     /**
-     * Returns the result of filtering $content.
-     *
-     * @param mixed $content
-     * @return mixed
+     * {@inheritDoc}
      */
     public function filter($content)
     {
@@ -72,6 +69,14 @@ class DotsUnited_BundleFu_Filter_ClosureCompilerService implements DotsUnited_Bu
             return $result;
         }
 
+        return $content;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    function filterFile($content, $file, \SplFileInfo $fileInfo)
+    {
         return $content;
     }
 }

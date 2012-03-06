@@ -25,7 +25,7 @@ class DotsUnited_BundleFu_Factory
     protected $options = array();
 
     /**
-     * Filter ma.
+     * Filter map.
      *
      * @var array
      */
@@ -69,7 +69,7 @@ class DotsUnited_BundleFu_Factory
      * @param DotsUnited_BundleFu_Filter_FilterInterface $filter
      * @return DotsUnited_BundleFu_Factory
      */
-    public function setFilter($name, DotsUnited_BundleFu_Filter_FilterInterface $filter)
+    public function setFilter($name, DotsUnited_BundleFu_Filter_FilterInterface $filter = null)
     {
         $this->filters[$name] = $filter;
 
@@ -84,7 +84,7 @@ class DotsUnited_BundleFu_Factory
      */
     public function getFilter($name)
     {
-        if (!isset($this->filters[$name])) {
+        if (!array_key_exists($name, $this->filters)) {
             throw new RuntimeException('There is no filter for the name "' . $name . '" registered.');
         }
 
