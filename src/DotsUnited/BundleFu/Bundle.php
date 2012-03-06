@@ -788,7 +788,7 @@ class DotsUnited_BundleFu_Bundle
                     $data .= '/* FILE READ ERROR! */' . PHP_EOL;
                 } else {
                     if (null !== $filter) {
-                        $data = $filter->filterFile($data, $file, $fileInfo);
+                        $contents = $filter->filterFile($contents, $file, $fileInfo);
                     }
 
                     $data .= $cssUrlRewriter->rewriteUrls($file, $contents) . PHP_EOL;
@@ -846,7 +846,7 @@ class DotsUnited_BundleFu_Bundle
                     $data .= '/* FILE READ ERROR! */' . PHP_EOL;
                 } else {
                     if (null !== $filter) {
-                        $data = $filter->filterFile($data, $file, $fileInfo);
+                        $contents = $filter->filterFile($contents, $file, $fileInfo);
                     }
 
                     $data .= $contents . PHP_EOL;
