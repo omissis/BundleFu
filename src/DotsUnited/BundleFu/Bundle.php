@@ -18,6 +18,7 @@ use DotsUnited\BundleFu\Filter\CssUrlRewriteFilter;
  * DotsUnited\BundleFu\Bundle
  *
  * @author  Jan Sorgalla <jan.sorgalla@dotsunited.de>
+ * @author  Claudio Beatrice <claudi0.beatric3@gmail.com>
  * @version @package_version@
  */
 class Bundle
@@ -161,47 +162,11 @@ class Bundle
     public function setOptions(array $options)
     {
         foreach ($options as $key => $val) {
-            switch ($key) {
-                case 'name':
-                    $this->setName($val);
-                    break;
-                case 'doc_root':
-                    $this->setDocRoot($val);
-                    break;
-                case 'bypass':
-                    $this->setBypass($val);
-                    break;
-                case 'force':
-                    $this->setForce($val);
-                    break;
-                case 'render_as_xhtml':
-                    $this->setRenderAsXhtml($val);
-                    break;
-                case 'css_filter':
-                    $this->setCssFilter($val);
-                    break;
-                case 'js_filter':
-                    $this->setJsFilter($val);
-                    break;
-                case 'css_cache_path':
-                    $this->setCssCachePath($val);
-                    break;
-                case 'js_cache_path':
-                    $this->setJsCachePath($val);
-                    break;
-                case 'css_cache_url':
-                    $this->setCssCacheUrl($val);
-                    break;
-                case 'js_cache_url':
-                    $this->setJsCacheUrl($val);
-                    break;
-                case 'css_template':
-                    $this->setCssTemplate($val);
-                    break;
-                case 'js_template':
-                    $this->setJsTemplate($val);
-                    break;
-            }
+            $mutator = 'set' . preg_replace_callback('/_(\w){1}/', function ($matches) {
+                return strtoupper(array_pop($matches));
+            }, $key);
+
+            $this->$mutator($val);
         }
 
         return $this;
