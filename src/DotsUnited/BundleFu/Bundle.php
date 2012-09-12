@@ -3,7 +3,8 @@
 /*
  * This file is part of BundleFu.
  *
- * (c) 2011 Jan Sorgalla <jan.sorgalla@dotsunited.de>
+ * (c) 2012 Jan Sorgalla <jan.sorgalla@dotsunited.de>
+ * (c) 2012 Claudio Beatrice <claudi0.beatric3@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -138,6 +139,20 @@ class Bundle
      * @var array
      */
     protected $currentBundleOptions;
+
+    /**
+     * Flags to use when writing files.
+     *
+     * @var int
+     */
+    protected $fileLockFlags = LOCK_EX;
+
+    /**
+     * Whether the current filesystem supports directories or not.
+     *
+     * @var boolean
+     */
+    protected $fsDirectorySupport = true;
 
     /**
      * Constructor.
@@ -484,6 +499,51 @@ class Bundle
     public function getJsFilter()
     {
         return $this->jsFilter;
+    }
+
+    /**
+     * Set file lock flags.
+     *
+     * @see http://www.php.net/manual/en/function.file-put-contents.php
+     *
+     * @param int $fileLockFlags
+     * @return Bundle
+     */
+    public function setFileLockFlags($fileLockFlags)
+    {
+        $this->fileLockFlags = $fileLockFlags;
+        return $this;
+    }
+
+    /**
+     * Get file lock flags.
+     *
+     * @return int
+     */
+    public function getFileLockFlags()
+    {
+        return $this->fileLockFlags;
+    }
+
+    /**
+     * Set whether the current filesystem supports directories or not.
+     *
+     * @return Bundle
+     */
+    public function setFsDirectorySupport($fsDirectorySupport)
+    {
+        $this->fsDirectorySupport = $fsDirectorySupport;
+        return $this;
+    }
+
+    /**
+     * Tell whether the current filesystem supports directories or not.
+     *
+     * @return boolean
+     */
+    public function hasFsDirectorySupport()
+    {
+        return $this->fsDirectorySupport;
     }
 
     /**
@@ -919,11 +979,13 @@ class Bundle
     {
         $dir = dirname($bundlePath);
 
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777, true);
+        if ($this->hasFsDirectorySupport()) {
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
         }
 
-        if (false === file_put_contents($bundlePath, $data, LOCK_EX)) {
+        if (false === file_put_contents($bundlePath, $data, $this->getFileLockFlags())) {
             // @codeCoverageIgnoreStart
             throw new \RuntimeException('Cannot write cache file to "' . $bundlePath . '"');
             // @codeCoverageIgnoreEnd

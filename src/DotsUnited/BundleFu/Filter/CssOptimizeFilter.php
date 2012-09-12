@@ -3,7 +3,8 @@
 /*
  * This file is part of BundleFu.
  *
- * (c) 2011 Jan Sorgalla <jan.sorgalla@dotsunited.de>
+ * (c) 2012 Jan Sorgalla <jan.sorgalla@dotsunited.de>
+ * (c) 2012 Claudio Beatrice <claudi0.beatric3@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
