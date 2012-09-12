@@ -13,8 +13,47 @@
             "homepage": "http://dotsunited.de"
         }
     ],
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "rackspace/cloudfiles",
+                "version" : "dev-master",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/rackspace/php-cloudfiles.git",
+                    "reference": "master"
+                },
+                "autoload": {
+                    "psr-0" : {
+                        "": ""
+                    }
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "kynx/Kynx",
+                "version" : "dev-master",
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/kynx/Kynx.git",
+                    "reference": "master"
+                },
+                "autoload": {
+                    "psr-0" : {
+                        "": ""
+                    }
+                }
+            }
+        }
+    ],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.3",
+        "rackspace/cloudfiles": "dev-master",
+        "kynx/Kynx": "dev-master",
+        "omissis/php-toolbox": "0.1.4"
     },
     "autoload": {
         "psr-0": {
