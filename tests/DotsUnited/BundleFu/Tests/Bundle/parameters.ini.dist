@@ -1,0 +1,6 @@
+; copy this file to parameters.ini and add the data for your Rackspace account
+apiKey=
+authUrl=auth.api.rackspacecloud.com
+cdnContainerUrl=
+containerName=
+username=

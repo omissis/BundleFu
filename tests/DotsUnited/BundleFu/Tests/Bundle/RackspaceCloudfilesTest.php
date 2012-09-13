@@ -22,11 +22,11 @@ use DotsUnited\BundleFu\Tests\TestCase;
  */
 class RackspaceCloudfilesTest extends TestCase
 {
-    private $username        = null;
-    private $apiKey          = null;
-    private $authUrl         = 'auth.api.rackspacecloud.com';
-    private $containerName   = 'test';
-    private $cdnContainerUrl = null;
+    private $apiKey;
+    private $authUrl;
+    private $containerName;
+    private $cdnContainerUrl;
+    private $username;
 
     public function __construct()
     {
@@ -36,16 +36,26 @@ class RackspaceCloudfilesTest extends TestCase
         require_once 'Drupal/includes/stream_wrappers.inc';
         require_once 'Drupal/rackspacecloudfiles_streams.inc';
 
-        variable_set('rackspace_cloud_cdn_domain', $this->cdnContainerUrl);
-        variable_set('rackspace_cloud_container',  $this->containerName);
-        variable_set('rackspace_cloud_username',   $this->username);
+        if (file_exists(__DIR__ . '/parameters.ini')) {
+            $parameters = parse_ini_file(__DIR__ . '/parameters.ini');
+
+            $this->apiKey          = $parameters['apiKey'];
+            $this->authUrl         = $parameters['authUrl'];
+            $this->cdnContainerUrl = $parameters['cdnContainerUrl'];
+            $this->containerName   = $parameters['containerName'];
+            $this->username        = $parameters['username'];
+        }
+
         variable_set('rackspace_cloud_api_key',    $this->apiKey);
         variable_set('rackspace_cloud_auth_url',   $this->authUrl);
+        variable_set('rackspace_cloud_container',  $this->containerName);
+        variable_set('rackspace_cloud_cdn_domain', $this->cdnContainerUrl);
+        variable_set('rackspace_cloud_username',   $this->username);
     }
 
     protected function checkSkipTest()
     {
-        if (empty($username) || empty($apiKey) || empty($cdnContainerUrl)) {
+        if (empty($this->username) || empty($this->apiKey) || empty($this->cdnContainerUrl)) {
             $this->markTestSkipped(
                 'You must provide username, apiKey and cdnContainerUrl. Check http://www.rackspace.com/cloud/public/files/resources/ for more information.'
             );
