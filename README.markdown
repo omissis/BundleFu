@@ -34,6 +34,7 @@ Features
 
   * Automatically detects modifications to your css and javascript files and regenerates the bundles automatically.
   * Bundle contents can be modified by filters for css url rewriting to avoid broken images, code minification and compression etc. (A [Google Closure Compiler](http://code.google.com/closure/compiler/) filter using the [Service API](http://code.google.com/closure/compiler/docs/api-ref.html) comes with the library).
+  * Ability to store the generated bundles on Rackspace Cloudfiles.
 
 Installation
 ------------
@@ -50,6 +51,26 @@ You can then use the composer-generated autoloader to access the BundleFu classe
 ```php
 <?php
 require 'vendor/autoload.php';
+?>
+```
+
+If you need to upload the bundles to Rackspace Cloudfiles, you'll need to register the provided stream wrapper:
+
+```php
+<?php
+require_once 'Drupal/shims.inc';
+require_once 'Drupal/includes/file.inc';
+require_once 'Drupal/includes/stream_wrappers.inc';
+require_once 'Drupal/rackspacecloudfiles_streams.inc';
+
+variable_set('rackspace_cloud_api_key',    $apiKey);
+variable_set('rackspace_cloud_auth_url',   $authUrl);
+variable_set('rackspace_cloud_container',  $containerName);
+variable_set('rackspace_cloud_cdn_domain', $cdnContainerUrl);
+variable_set('rackspace_cloud_username',   $username);
+
+stream_wrapper_register('rscf', 'RackspaceCloudFilesStreamWrapper')
+    or die("Failed to register rscf:// protocol");
 ?>
 ```
 

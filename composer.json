@@ -1,16 +1,20 @@
 {
-    "name": "dotsunited/bundlefu",
+    "name": "omissis/bundlefu",
     "type": "library",
     "description": "BundleFu is a PHP 5.3+ library which bundles multiple css/javascript files into a big package and sends it out at once",
-    "keywords": ["css", "javascript", "bundling", "asset"],
-    "homepage": "https://github.com/dotsunited/BundleFu",
-    "version": "0.9.4",
+    "keywords": ["css", "javascript", "bundling", "asset", "rackspace", "cloudfiles"],
+    "homepage": "https://github.com/omissis/BundleFu",
     "license": "New BSD",
     "authors": [
         {
             "name": "Jan Sorgalla",
             "email": "jan.sorgalla@dotsunited.de",
             "homepage": "http://dotsunited.de"
+        },
+        {
+            "name": "Claudio Beatrice",
+            "email": "claudi0.beatric3@gmail.com",
+            "homepage": "http://silent-voice.org"
         }
     ],
     "repositories": [
@@ -27,19 +31,13 @@
                 "dist": {
                     "url": "https://github.com/rackspace/php-cloudfiles/zipball/master",
                     "type": "zip"
-                },
-                "autoload": {
-                    "psr-0" : {
-                        "": ""
-                    }
                 }
             }
         }
     ],
     "require": {
         "php": ">=5.3.3",
-        "rackspace/cloudfiles": "dev-master",
-        "omissis/php-toolbox": "0.1.4"
+        "rackspace/cloudfiles": "dev-master"
     },
     "autoload": {
         "psr-0": {
