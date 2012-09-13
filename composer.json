@@ -17,27 +17,9 @@
             "homepage": "http://silent-voice.org"
         }
     ],
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "rackspace/cloudfiles",
-                "version" : "dev-master",
-                "source": {
-                    "type": "git",
-                    "url": "https://github.com/rackspace/php-cloudfiles.git",
-                    "reference": "master"
-                },
-                "dist": {
-                    "url": "https://github.com/rackspace/php-cloudfiles/zipball/master",
-                    "type": "zip"
-                }
-            }
-        }
-    ],
     "require": {
         "php": ">=5.3.3",
-        "rackspace/cloudfiles": "dev-master"
+        "omissis/php-cloudfiles": "1.7.12"
     },
     "autoload": {
         "psr-0": {
