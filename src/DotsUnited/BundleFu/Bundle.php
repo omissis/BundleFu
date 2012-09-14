@@ -404,7 +404,7 @@ class Bundle
      */
     public function getCssTemplate()
     {
-        return $this->cssTemplate ;
+        return $this->cssTemplate;
     }
 
     /**
@@ -426,7 +426,7 @@ class Bundle
      */
     public function getJsTemplate()
     {
-        return $this->jsTemplate ;
+        return $this->jsTemplate;
     }
 
     /**
