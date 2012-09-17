@@ -7,7 +7,7 @@
 
 define('CACHE_TEMPORARY', 0);
 define('DRUPAL_ROOT', __DIR__);
-define('WATCHDOG_NOTICE', 7);
+define('WATCHDOG_NOTICE', 5);
 define('WATCHDOG_DEBUG', 7);
 
 /**
