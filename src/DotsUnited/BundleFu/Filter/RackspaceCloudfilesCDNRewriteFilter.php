@@ -23,6 +23,14 @@ class RackspaceCloudfilesCDNRewriteFilter implements FilterInterface
 {
     protected $file;
     protected $bundleUrl;
+    protected $namespace;
+
+    public function __construct(array $options = array())
+    {
+        if (isset($options['namespace'])) {
+            $this->namespace = $options['namespace'];
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -57,6 +65,7 @@ class RackspaceCloudfilesCDNRewriteFilter implements FilterInterface
         $matchedUrl = trim($matches['url']);
 
         if ('/' === $matchedUrl[0] && '/' !== $matchedUrl[1]) {
+            $matches[0] = str_replace($matchedUrl, $this->namespace . $matchedUrl, $matches[0]);
             return str_replace('/', '_', $matches[0]);
         }
 
@@ -75,7 +84,7 @@ class RackspaceCloudfilesCDNRewriteFilter implements FilterInterface
 
         if (false !== strpos($path, '://') || 0 === strpos($path, '//')) {
             // parse_url() does not work with protocol-relative urls
-            list(, $url) = explode('//', $path, 2);
+            list(, $url)  = explode('//', $path, 2);
             list(, $path) = explode('/', $url, 2);
         }
 
@@ -100,9 +109,6 @@ class RackspaceCloudfilesCDNRewriteFilter implements FilterInterface
      */
     protected function rewriteRelative($url, $sourceUrl, $bundleUrl)
     {
-        // $sourceUrl = trim($sourceUrl, '/');
-        // $bundleUrl = trim($bundleUrl, '/');
-
         if ('.' !== $url[0]) {
             $url = '/' . $sourceUrl . '/' . $url;
         }
@@ -115,7 +121,7 @@ class RackspaceCloudfilesCDNRewriteFilter implements FilterInterface
             $url = str_replace('__', '_', $url);
         }
 
-        return $url;
+        return $this->namespace . $url;
     }
 
     /**

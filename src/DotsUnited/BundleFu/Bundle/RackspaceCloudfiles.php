@@ -32,11 +32,13 @@ class RackspaceCloudfiles extends Bundle
     private $performWrite = false;
 
     /**
-     * Checksum to prepend to filenames in order to bust the CDN cache on demand.
+     * Namespace to prepend to filenames in order to bust the CDN cache on demand.
+     *
+     * It can be a checksum or a timestamp or else.
      *
      * @var string
      */
-    private $checksum = null;
+    private $namespace = null;
 
     /**
      * Constructor.
@@ -49,8 +51,8 @@ class RackspaceCloudfiles extends Bundle
         // the CDN caches the files and has a TTL of at least 1 hour. This way we will avoid
         // that limit and we'll be able to control the busting at deploy time,
         // even though it comes at the cost of having zombie files on the CDN.
-        $this->cssTemplate = '<link href="%s%s" rel="stylesheet" type="text/css"%s>';
-        $this->jsTemplate  = '<script src="%s%s" type="text/javascript"></script>';
+        $this->cssTemplate = '<link href="%s" rel="stylesheet" type="text/css"%s>';
+        $this->jsTemplate  = '<script src="%s" type="text/javascript"></script>';
 
         if (!array_key_exists('css_filter', $options)) {
             $options['css_filter'] = new RackspaceCloudfilesCDNRewriteFilter();
@@ -73,15 +75,135 @@ class RackspaceCloudfiles extends Bundle
         return $this->performWrite;
     }
 
-    public function setChecksum($checksum)
+    public function setNamespace($namespace)
     {
-        $this->checksum = $checksum;
+        $this->namespace = $namespace;
         return $this;
     }
 
-    public function getChecksum()
+    public function getNamespace()
     {
-        return empty($this->checksum) ? null : $this->checksum . '_';
+        return empty($this->namespace) ? null : $this->namespace . '_';
+    }
+
+    /**
+     * Get css bundle path.
+     *
+     * @return string
+     */
+    public function getCssBundlePath()
+    {
+        $cacheDir = $this->getCssCachePath();
+
+        if ($this->isRelativePath($cacheDir)) {
+            $cacheDir = $this->getDocRoot() . DIRECTORY_SEPARATOR . $cacheDir;
+        }
+
+        $name = $this->getName();
+
+        if (null === $name) {
+            $name = sprintf('bundle_%s', $this->getCssFileList()->getHash());
+        }
+
+        return sprintf(
+            "%s%s%s.css",
+            $cacheDir,
+            DIRECTORY_SEPARATOR,
+            $this->getNamespace() . $name
+        );
+    }
+
+    /**
+     * Get javascript bundle path.
+     *
+     * @return string
+     */
+    public function getJsBundlePath()
+    {
+        $cacheDir = $this->getJsCachePath();
+
+        if ($this->isRelativePath($cacheDir)) {
+            $cacheDir = $this->getDocRoot() . DIRECTORY_SEPARATOR . $cacheDir;
+        }
+
+        $name = $this->getName();
+
+        if (null === $name) {
+            $name = sprintf('bundle_%s', $this->getJsFileList()->getHash());
+        }
+
+        return sprintf(
+            "%s%s%s.js",
+            $cacheDir,
+            DIRECTORY_SEPARATOR,
+            $this->getNamespace() . $name
+        );
+    }
+
+    /**
+     * Get css bundle url.
+     *
+     * @return string
+     */
+    public function getCssBundleUrl()
+    {
+        $url = $this->getCssCacheUrl();
+
+        if (!$url) {
+            $url = $this->getCssCachePath();
+
+            if (!$this->isRelativePath($url)) {
+                throw new \RuntimeException('If you do not provide a css cache url, css cache path must be a relative local path...');
+            }
+
+            $url = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $url);
+        }
+
+        $name = $this->getName();
+
+        if (null === $name) {
+            $name = sprintf('bundle_%s', $this->getCssFileList()->getHash());
+        }
+
+        return sprintf(
+            "%s/%s%s.css",
+            $url,
+            $this->getNamespace(),
+            $name
+        );
+    }
+
+    /**
+     * Get javascript bundle url.
+     *
+     * @return string
+     */
+    public function getJsBundleUrl()
+    {
+        $url = $this->getJsCacheUrl();
+
+        if (!$url) {
+            $url = $this->getJsCachePath();
+
+            if (!$this->isRelativePath($url)) {
+                throw new \RuntimeException('If you do not provide a js cache url, js cache path must be a relative local path...');
+            }
+
+            $url = '/' . str_replace(DIRECTORY_SEPARATOR, '/', $url);
+        }
+
+        $name = $this->getName();
+
+        if (null === $name) {
+            $name = sprintf('bundle_%s', $this->getJsFileList()->getHash());
+        }
+
+        return sprintf(
+            "%s/%s%s.js",
+            $url,
+            $this->getNamespace(),
+            $name
+        );
     }
 
     /**
@@ -131,12 +253,11 @@ class RackspaceCloudfiles extends Bundle
         $template = $this->getCssTemplate();
 
         if (is_callable($template)) {
-            return call_user_func($template, $this->getChecksum(), $bundleUrl, $this->getRenderAsXhtml());
+            return call_user_func($template, $this->getNamespace(), $bundleUrl, $this->getRenderAsXhtml());
         }
 
         return sprintf(
             $template,
-            $this->getChecksum(),
             $bundleUrl,
             $this->getRenderAsXhtml() ? ' /' : ''
         );
@@ -156,7 +277,7 @@ class RackspaceCloudfiles extends Bundle
         }
 
         $bundlePath = $this->getJsBundlePath();
-        $bundleUrl = $this->getJsBundleUrl();
+        $bundleUrl  = $this->getJsBundleUrl();
 
         if ($this->getPerformWrite()) {
             $data   = '';
@@ -186,12 +307,11 @@ class RackspaceCloudfiles extends Bundle
         $template = $this->getJsTemplate();
 
         if (is_callable($template)) {
-            return call_user_func($template, $this->getChecksum(), $bundleUrl);
+            return call_user_func($template, $bundleUrl);
         }
 
         return sprintf(
             $template,
-            $this->getChecksum(),
             $bundleUrl
         );
     }
